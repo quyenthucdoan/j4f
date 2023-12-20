@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Users {
+  user_id Int @id @default(autoincrement())
+  username String @db.VarChar(20)
+  hased_password String
+  email String @unique
+  register_date DateTime @default(now())
+  bio String @default("Hello, follow me")
+
+  posts Posts[]
+  peplies Replies[]
+  views Views[]
+  likes Likes[]
+}
+
+model Topics {
+  topic_id Int @id @default(autoincrement())
+  topic_name String @unique
+  body String 
+  create_at DateTime @default(now())
+  num_of_posts Int @default(0)
+
+  posts Posts[]
+}
+
+model Posts {
+  post_id Int @id @default(autoincrement())
+  title String @unique
+  body String
+  creat_at DateTime @default(now())
+  user_id Int @unique
+  topic_id Int
+  num_of_likes Int @default(0)
+  num_of_replies Int @default(0)
+  num_of_views Int @default(0)
+
+  replies Replies[]
+  views Views[]
+  likes Likes[]
+  user Users @relation(fields: [user_id], references: [user_id])
+  topic Topics @relation(fields: [topic_id], references: [topic_id])
+}
+
+model Replies{
+  user_id Int 
+  post_id Int
+  body String
+  create_at DateTime @default(now())
+
+  user Users @relation(fields: [user_id], references: [user_id])
+  post Posts @relation(fields: [post_id], references: [post_id])
+  @@id(name:"reply_id",[user_id, post_id])
+}
+
+model Views{
+  user_id Int
+  post_id Int
+
+  user Users @relation(fields: [user_id], references: [user_id])
+  post Posts @relation(fields: [post_id], references: [post_id])
+  @@id(name:"user_view_id",[user_id, post_id])
+}
+
+model Likes{
+  user_id Int
+  post_id Int
+  create_at DateTime @default(now())
+
+  user Users @relation(fields: [user_id], references: [user_id])
+  post Posts @relation(fields: [post_id], references: [post_id])
+  @@id(name:"user_like_id",[user_id, post_id])
+}

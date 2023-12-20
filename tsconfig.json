@@ -15,11 +15,12 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next"
+        "name": "next"  
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "db": ["src/lib/prisma"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
